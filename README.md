@@ -57,12 +57,12 @@ RAdam：warmup（1. 减缓模型在初始阶段对样本复杂信息的过拟合
 - loss函数改造：
     - `label smoothing`: 标签平滑。
     - `focal loss`: 给每个样本的分类loss增加一个因子项，降低分类误差小的样本的影响，解决难易样本问题。
-    > ![focal loss类别概率和损失关系图](images/focal-loss.jpg)
+    > ![focal loss类别概率和损失关系图](https://github.com/zheng-yuwei/multi-label-classification/tree/master/images/focal-loss.jpg)
     - `gradient harmonizing mechanism (GHM)`: 
     根据样本梯度密度曲线（这里的梯度是梯度范数，并且不是所有网络参数的梯度，而是最后一层的回传梯度），
     取反得到梯度密度调和参数（和平衡多类别数据集一个意思，只不过这里不是按类别来平衡，而是按梯度区间来平衡），
     再乘以梯度以**调整梯度贡献曲线**，从而降低高密度区域的梯度贡献比例，提升低密度区域的梯度贡献比例。
-    > ![GHM论文梯度分布与贡献图](images/GHM-insight.jpg)
+    > ![GHM论文梯度分布与贡献图](https://github.com/zheng-yuwei/multi-label-classification/tree/master/images/GHM-insight.jpg)
     >
     > 原论文insight： 对网络训练而言，梯度是最重要的东西，而网络训练不好，也是因为梯度没调节好。
     focal loss认为前背景不平衡问题，本质为难易样本不平衡问题，从而调节样本的梯度贡献，一定程度上解决了背景问题。
@@ -89,7 +89,7 @@ RAdam：warmup（1. 减缓模型在初始阶段对样本复杂信息的过拟合
 但是，我实际训练过程中，模型过拟合了！！！
 
 - batch size：大肯定是越好的，然后发现 (batch-size % total-size) != 0 也能提升效果，可能是shuffle得更好；
-（这个好像效果比增加宽度好，可能是我数据量小（用了12张图片做实验，因为**用少量数据验证代码**，所以希望过拟合，2333），
+（这个好像效果比增加宽度好，可能是我数据量小（用了12张图片做实验，因为**用少量数据验证代码**，所以希望过拟合），
 模型拟合能力已经够了，但是不好好shuffle会形成震荡效果（我用的adam），最终模型会收敛不好）
 
 - warm up: 这个是**墙裂推荐**
@@ -127,7 +127,7 @@ TIPS：其他试过但基本无效的手段包括：
 augment + [30bins, 0.75LWMA] label-wise的ghm + 
 resnet18(最后一个block为384而非512，这个并没有实验过，随手设置小一点而已；
 conv层没有bias，影响会被BN层消除，并且实验后的确也比较好）**  
-实际测试集上，总准确率98+%，指定置信度召回率85+%，准确率99.9+%)
+实际测试集上，总准确率98+%，指定置信度召回率85+%，准确率99.9+%；在闸门这种简单场景下可达到99.9+%)
 
 |   model  | weight-decay | whiting | augment | label smoothing |   backbone   | GHM-loss | prune | acc   | recall |  
 | :------: | :----------: | :-----: | :-----: | :-------------: | :----------: | :------: | :---: | :---: | :----: | 
