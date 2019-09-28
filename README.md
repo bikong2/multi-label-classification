@@ -108,15 +108,15 @@ RAdam：warmup（1. 减缓模型在初始阶段对样本复杂信息的过拟合
 
 - 权重衰减：基本建议就是，ref 论文中的L2权重衰减的量级。
 
-## 缓解过拟合/标注错误/样本错误（效果不分先后，根据实现难度来）
-1. 一定程度提高BN层中gamma的L2权重衰减，conv层的L2权重衰减可以维持不变；[1,2,3]
+## 缓解过拟合/标注错误/样本错误（稍微按效果分先后，按实际数据来）
+1. 一定程度提高BN层中gamma的L2权重衰减，conv层的L2权重衰减可以维持不变，去掉bias；[1,2,3]
 1. 加大batch，然后要用warmup（我一开始用adam+warmup,后面用radam+warmup, radam中用动态学习率）；[4,5,6]
 1. 白化预处理；
-1. label smoothing:；[7]
-1. 数据增强（增加数据量）；
 1. 修改网络结构，resnext18相比resnet18多了结构正则的作用，效果好些；
-1. GHM损失函数；[8]
 1. 剪枝，其实和修改网络结构一个道理，只不过剪枝可以类似NAS自动找到更好的sub-network(网络结构)；[3,9,10]
+1. GHM损失函数；[8]
+1. 数据增强（增加数据量）；
+1. label smoothing:；[7]
 
 TIPS：其他试过但基本无效的手段包括：
 继续加大weight decay权重，BN层的gamma不加weight decay，BN层的beta加weight decay，
