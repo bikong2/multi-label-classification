@@ -82,6 +82,15 @@ class MyLoss(object):
             y_pred = keras.backend.clip(y_pred, epsilon, 1.0 - epsilon)
             # 0. 计算本次mini-batch的梯度分布：R_ind(g)
             gradient = keras.backend.abs(y_truth - y_pred)
+            # 获取概率最大的类别下标，将该类别的梯度最为该标签的梯度代表
+            truth_indices_1 = keras.backend.expand_dims(keras.backend.argmax(y_truth, axis=1))
+            truth_indices_0 = keras.backend.expand_dims(keras.backend.arange(start=0,
+                                                                             stop=tf.shape(y_pred)[0],
+                                                                             step=1, dtype='int64'))
+            truth_indices = keras.backend.concatenate([truth_indices_0, truth_indices_1])
+            main_gradient = tf.gather_nd(gradient, truth_indices)
+            gradient = tf.tile(tf.expand_dims(main_gradient, axis=-1), [1, y_pred.shape[1]])
+            
             # 求解各个梯度所在的区间，并落到对应区间内进行密度计数
             grads_bin = tf.logical_and(tf.greater_equal(gradient, edges[:-1, :, :]), tf.less(gradient, edges[1:, :, :]))
             valid_bin = tf.boolean_mask(grads_bin, valid_mask, name='valid_gradient', axis=1)

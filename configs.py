@@ -38,7 +38,7 @@ FLAGS.optimizer = 'radam'  # sgdm, adam, adabound, radam
 FLAGS.is_augment = True
 FLAGS.is_label_smoothing = False
 FLAGS.is_focal_loss = False
-FLAGS.is_gradient_harmonized = False
+FLAGS.is_gradient_harmonized = True
 FLAGS.type = FLAGS.model_backbone + '-' + FLAGS.optimizer
 FLAGS.type += ('-aug' if FLAGS.is_augment else '')
 FLAGS.type += ('-smooth' if FLAGS.is_label_smoothing else '')
@@ -70,7 +70,7 @@ FLAGS.checkpoint_name = 'lp-recognition-{}'.format(FLAGS.type) + '-{epoch: 3d}-{
 FLAGS.serving_model_dir = FLAGS.root_path + 'models/serving'
 FLAGS.pb_model_dir = FLAGS.root_path + 'models/pb'
 # 测试参数
-FLAGS.base_confidence = 0.95  # 基础置信度
+FLAGS.base_confidence = 0.83  # 基础置信度
 # 训练gpu
 FLAGS.gpu_mode = 'cpu'
 FLAGS.gpu_num = 1
