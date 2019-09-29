@@ -8,6 +8,7 @@ from tensorflow import keras
 from backbone.resnet18 import ResNet18
 from backbone.resnet18_v2 import ResNet18_v2
 from backbone.resnext import ResNeXt18
+from backbone.mixnet18 import MixNet18
 
 
 class Classifier(object):
@@ -17,6 +18,7 @@ class Classifier(object):
     BACKBONE_RESNET_18 = 'resnet-18'
     BACKBONE_RESNET_18_V2 = 'resnet-18-v2'
     BACKBONE_RESNEXT_18 = 'resnext-18'
+    BACKBONE_MIXNET_18 = 'mixnet-18'
     BACKBONE_MOBILENET = 'mobilenet'
     BACKBONE_MOBILENET_V2 = 'mobilenet-v2'
     BACKBONE_PELEENET = 'peleenet'
@@ -63,6 +65,8 @@ class Classifier(object):
             backbone_func = ResNet18_v2.build
         elif backbone == Classifier.BACKBONE_RESNEXT_18:
             backbone_func = ResNeXt18.build
+        elif backbone == Classifier.BACKBONE_MIXNET_18:
+            backbone_func = MixNet18.build
         else:
             raise ValueError("没有该类型的基础网络！")
 
@@ -82,7 +86,8 @@ if __name__ == '__main__':
     model_names = {
         'resnet-18': Classifier.BACKBONE_RESNET_18,
         'resnet-18-v2': Classifier.BACKBONE_RESNET_18_V2,
-        'resnext-18': Classifier.BACKBONE_RESNEXT_18
+        'resnext-18': Classifier.BACKBONE_RESNEXT_18,
+        'mixnet-18': Classifier.BACKBONE_MIXNET_18
     }
     for key, value in model_names.items():
         test_model = Classifier.build(value, FLAGS.input_shape, FLAGS.output_shapes, FLAGS.output_names)
