@@ -9,7 +9,7 @@ from tensorflow import keras
 def _bn_relu(input_x):
     """ 预激活 """
     bn = keras.layers.BatchNormalization(axis=ResNet18_v2.CHANNEL_AXIS, momentum=ResNet18_v2.BATCH_NORM_DECAY,
-                                         gamma_regularizer=keras.regularizers.l2(ResNet18_v2.L2_WEIGHT),
+                                         gamma_regularizer=keras.regularizers.l2(ResNet18_v2.L2_GAMMA_DECAY),
                                          epsilon=ResNet18_v2.BATCH_NORM_EPSILON)(input_x)
     return keras.layers.Activation(activation='relu')(bn)
 
@@ -103,6 +103,7 @@ def residual_v2_module(input_x, **conv_params):
 class ResNet18_v2(object):
 
     L2_WEIGHT = 5.e-4
+    L2_GAMMA_DECAY = 1.e-3
     BATCH_NORM_DECAY = 0.9
     BATCH_NORM_EPSILON = 1e-5
     BATCH_SIZE_AXIS = 0

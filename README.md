@@ -29,6 +29,16 @@ RAdam：warmup（1. 减缓模型在初始阶段对样本复杂信息的过拟合
 4. 类间数据不平衡：类间数据balance（正交梯度，few-shot）；
 5. 较强的模型能力，较快的推理速度：剪枝（slim），模型蒸馏；（nas？）
 
+使用多分类模型而不使用CNN + GRU + CTC Loss的OCR模型原因：
+1. OCR多了localization先验（单层车牌水平序），但该先验对于双层车牌却是错误的先验？
+1. RNN结构使得推理最后分类部分有时序耦合作用，降低推理速度；
+1. 中国车牌不同位置的字符具有不同取值集合，而RNN结构将这些值集放到一起进行预测，
+失去了不同位的值集先验，并且提升了类别失衡的风险；
+1. 虽然中国车牌具有7位、8位这种两种不定长的情况，但是分类模型通过增加一个标签便可解决，
+RNN的优势不明显；
+1. 车牌大多数时候没有context信息（可能省份和第二位字符有一点）；
+1. 我更加熟悉分类模型，哈哈哈哈哈。
+
 ## 目录结构
 
 - `A_learning_notes`: README后，**先查看本部分**了解本项目大致结构；
@@ -123,10 +133,19 @@ TIPS：其他试过但基本无效的手段包括：
 全连接层加dropout，focal loss，从Adam训练改为SGDM，加warmup。
 
 (该表已过期，最终最有方案是：  
-**[0.00001, 0.001, 0.0001, 0.00001, 0.000001]的warmup RAdam + conv 5e-4的weight decay + BN lambda 1e-3的slim + whiting + 
-augment + [30bins, 0.75LWMA] label-wise的ghm + 
+**[0.00001, 0.001, 0.0001, 0.00001, 0.000001]的warmup RAdam +
+conv层（去bias，影响会被BN层消除，并且实验后的确也比较好） 5e-4的weight decay +
+BN层 lambda 1e-3的slim +
+whiting + augment +
+[30bins, 0.75LWMA] label-wise的ghm +
 resnet18(最后一个block为384而非512，这个并没有实验过，随手设置小一点而已；
-conv层没有bias，影响会被BN层消除，并且实验后的确也比较好）**  
+resnet18v2效果并没有变好，反而训练时间上升；
+resnext18泛化效果会好一些，但是训练时间上升好多，
+推理时间好像没有少；
+mixnet18训练时间大大上升，推理时间也长了，泛化效果比resnext好。
+[resnet 2个V100一个epoch 80s左右，resnext18 8个V100一个epoch 170s，mixnet18 8个V100一个epoch 300s；
+所以为了调参和迭代，还是选择resnet18比较好]
+）**
 实际测试集上，总准确率98+%，指定置信度召回率85+%，准确率99.9+%；在闸门这种简单场景下可达到99.9+%)
 
 |   model  | weight-decay | whiting | augment | label smoothing |   backbone   | GHM-loss | prune | acc   | recall |  

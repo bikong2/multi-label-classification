@@ -52,7 +52,7 @@ FLAGS.batch_size = 5  # 3079
 FLAGS.steps_per_epoch = int(np.ceil(FLAGS.train_set_size / FLAGS.batch_size))
 FLAGS.validation_steps = int(np.ceil(FLAGS.val_set_size / FLAGS.batch_size))
 
-FLAGS.epoch = 200
+FLAGS.epoch = 300
 FLAGS.init_lr = 0.0002  # nadam推荐使用值
 # callback的参数
 FLAGS.ckpt_period = 20  # 模型保存
