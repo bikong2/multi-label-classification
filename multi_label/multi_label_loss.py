@@ -99,7 +99,7 @@ class MyLoss(object):
             # 2. 更新指数移动平均后的梯度分布：S_ind(g)
             nonlocal acc_sum
             acc_sum = tf.add(momentum * acc_sum, (1 - momentum) * valid_bin, name='update_bin_number')
-            # sample_num = tf.reduce_sum(acc_sum)  # 是否乘以总数
+            # sample_num = tf.reduce_sum(acc_sum)  # 是否乘以总数，乘上效果反而变差了
             # 3. 计算本次mini-batch不同loss对应的梯度密度：GD(g)
             position = tf.slice(tf.where(grads_bin), [0, 1], [-1, 2])
             value = tf.gather_nd(acc_sum, tf.slice(tf.where(grads_bin), [0, 0], [-1, 1]))  # * bins
